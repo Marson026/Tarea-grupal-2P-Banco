@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
+<h:head>
+    <title><ui:insert name="title">Cajero Bi</ui:insert></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <h:outputStylesheet library="css" name="styles.css"/>
+</h:head>
+<h:body>
+    <main class="atm-shell">
+        <section class="atm-panel">
+            <aside class="brand-side">
+                <h:graphicImage library="images" name="banpais-inspiracion.png" styleClass="brand-image" alt="Logo Bi"/>
+                <div class="atm-card-preview">
+                    <span>ATM</span>
+                    <strong>Cuenta segura</strong>
+                    <small>Banco de Honduras</small>
+                </div>
+            </aside>
+
+            <section class="screen-side">
+                <header class="topbar">
+                    <span class="home-link">Cajero seguro</span>
+                    <span class="status-dot"></span>
+                </header>
+
+                <h:messages globalOnly="true" layout="table" infoClass="msg-info" errorClass="msg-error" warnClass="msg-warn"/>
+
+                <ui:insert name="content"/>
+            </section>
+        </section>
+    </main>
+</h:body>
+</html>

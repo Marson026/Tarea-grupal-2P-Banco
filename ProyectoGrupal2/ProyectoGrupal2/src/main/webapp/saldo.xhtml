@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+<ui:composition template="/WEB-INF/templates/layout.xhtml">
+    <ui:define name="title">Saldo</ui:define>
+    <ui:define name="content">
+        <div class="screen-heading">
+            <p>Estado de cuenta</p>
+            <h1>Consulta de saldo</h1>
+        </div>
+
+        <h:form styleClass="atm-form compact">
+            <label>Numero de cuenta</label>
+            <h:inputText value="#{cajeroBean.numeroCuenta}" maxlength="10"/>
+
+            <label>PIN</label>
+            <h:inputSecret value="#{cajeroBean.pin}" maxlength="4"/>
+
+            <div class="form-actions">
+                <h:commandButton value="Consultar" action="#{cajeroBean.consultarSaldo}" styleClass="primary-button"/>
+                <h:commandButton value="Volver al menu" action="#{cajeroBean.cerrarSesionYVolverMenu}" styleClass="secondary-button" immediate="true"/>
+            </div>
+        </h:form>
+
+        <h:panelGroup rendered="#{not empty cajeroBean.clienteConsultado}" layout="block" styleClass="balance-box">
+            <span>Cuenta protegida</span>
+            <strong>L #{cajeroBean.clienteConsultado.saldo}</strong>
+            <small>La informacion ingresada fue eliminada de la pantalla.</small>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{not empty cajeroBean.clienteConsultado}" layout="block" styleClass="history-section">
+            <div class="history-header">
+                <h2>Historial de esta cuenta</h2>
+                <h:form>
+                    <h:commandButton value="Cerrar sesion" action="#{cajeroBean.cerrarSesionYVolverMenu}" styleClass="secondary-button compact-button" immediate="true"/>
+                </h:form>
+            </div>
+
+            <h:dataTable value="#{cajeroBean.historialClienteConsultado}" var="tx" styleClass="history-table"
+                         rendered="#{not empty cajeroBean.historialClienteConsultado}">
+                <h:column>
+                    <f:facet name="header">Fecha</f:facet>
+                    #{tx.fechaTexto}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Tipo</f:facet>
+                    #{tx.tipo}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Cuenta</f:facet>
+                    #{tx.cuentaEnmascarada}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Monto</f:facet>
+                    L #{tx.monto}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Saldo final</f:facet>
+                    L #{tx.saldoFinal}
+                </h:column>
+            </h:dataTable>
+
+            <h:panelGroup rendered="#{empty cajeroBean.historialClienteConsultado}" layout="block" styleClass="empty-history">
+                Esta cuenta no tiene transacciones registradas.
+            </h:panelGroup>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+<ui:composition template="/WEB-INF/templates/layout.xhtml">
+    <ui:define name="title">Retiro</ui:define>
+    <ui:define name="content">
+        <div class="screen-heading">
+            <p>Operacion</p>
+            <h1>Retiro</h1>
+        </div>
+
+        <h:form styleClass="atm-form">
+            <label>Numero de cuenta</label>
+            <h:inputText value="#{cajeroBean.numeroCuenta}" maxlength="10"/>
+
+            <label>PIN</label>
+            <h:inputSecret value="#{cajeroBean.pin}" maxlength="4"/>
+
+            <label>Monto en lempiras</label>
+            <h:inputText value="#{cajeroBean.monto}" maxlength="12"/>
+
+            <div class="form-actions">
+                <h:commandButton value="Confirmar retiro" action="#{cajeroBean.retirar}" styleClass="primary-button danger"/>
+                <h:link outcome="/index" value="Regresar al menu" styleClass="secondary-button"/>
+            </div>
+        </h:form>
+
+        <h:panelGroup rendered="#{cajeroBean.mostrarResultado}" layout="block" styleClass="result-overlay">
+            <div class="result-box">
+                <strong>#{cajeroBean.tituloResultado}</strong>
+                <span>#{cajeroBean.detalleResultado}</span>
+                <small>Sesion finalizada. Regresando al menu principal...</small>
+            </div>
+            <script>
+                setTimeout(function () {
+                    window.location.href = 'index.xhtml';
+                }, 3200);
+            </script>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>
+</html>

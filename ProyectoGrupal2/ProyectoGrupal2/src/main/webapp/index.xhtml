@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html">
+<ui:composition template="/WEB-INF/templates/layout.xhtml">
+    <ui:define name="title">Menu del Cajero</ui:define>
+    <ui:define name="content">
+        <div class="screen-heading">
+            <p>Bienvenido</p>
+            <h1>Cajero automatico Bi</h1>
+        </div>
+
+        <h:form styleClass="menu-grid">
+            <h:commandLink action="#{cajeroBean.irDeposito}" styleClass="menu-action">
+                <span>Depositar</span>
+                <small>Agregar fondos a una cuenta</small>
+            </h:commandLink>
+            <h:commandLink action="#{cajeroBean.irRetiro}" styleClass="menu-action">
+                <span>Retirar</span>
+                <small>Validar PIN y saldo disponible</small>
+            </h:commandLink>
+            <h:commandLink action="#{cajeroBean.irSaldo}" styleClass="menu-action">
+                <span>Consultar saldo</span>
+                <small>Ver el saldo actual de una cuenta</small>
+            </h:commandLink>
+        </h:form>
+    </ui:define>
+</ui:composition>
+</html>
