@@ -3,6 +3,9 @@
       xmlns:ui="jakarta.faces.facelets"
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core">
+<f:metadata>
+    <f:viewAction action="#{cajeroBean.prepararConsultaSaldo}"/>
+</f:metadata>
 <ui:composition template="/WEB-INF/templates/layout.xhtml">
     <ui:define name="title">Saldo</ui:define>
     <ui:define name="content">
@@ -12,20 +15,11 @@
         </div>
 
         <h:form styleClass="atm-form compact">
-            <label>Numero de cuenta</label>
-            <h:inputText value="#{cajeroBean.numeroCuenta}" maxlength="10"/>
-
-            <label>PIN</label>
-            <h:inputSecret value="#{cajeroBean.pin}" maxlength="4"/>
-
-            <div class="form-actions">
-                <h:commandButton value="Consultar" action="#{cajeroBean.consultarSaldo}" styleClass="primary-button"/>
-                <h:commandButton value="Volver al menu" action="#{cajeroBean.cerrarSesionYVolverMenu}" styleClass="secondary-button" immediate="true"/>
-            </div>
+            <h:commandButton value="Volver al menu" action="#{cajeroBean.volverMenu}" styleClass="secondary-button" immediate="true"/>
         </h:form>
 
         <h:panelGroup rendered="#{not empty cajeroBean.clienteConsultado}" layout="block" styleClass="balance-box">
-            <span>Cuenta protegida</span>
+            <span>#{cajeroBean.clienteConsultado.nombreCliente}</span>
             <strong>L #{cajeroBean.clienteConsultado.saldo}</strong>
             <small>La informacion ingresada fue eliminada de la pantalla.</small>
         </h:panelGroup>
@@ -33,34 +27,39 @@
         <h:panelGroup rendered="#{not empty cajeroBean.clienteConsultado}" layout="block" styleClass="history-section">
             <div class="history-header">
                 <h2>Historial de esta cuenta</h2>
-                <h:form>
-                    <h:commandButton value="Cerrar sesion" action="#{cajeroBean.cerrarSesionYVolverMenu}" styleClass="secondary-button compact-button" immediate="true"/>
-                </h:form>
             </div>
 
-            <h:dataTable value="#{cajeroBean.historialClienteConsultado}" var="tx" styleClass="history-table"
-                         rendered="#{not empty cajeroBean.historialClienteConsultado}">
-                <h:column>
-                    <f:facet name="header">Fecha</f:facet>
-                    #{tx.fechaTexto}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Tipo</f:facet>
-                    #{tx.tipo}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Cuenta</f:facet>
-                    #{tx.cuentaEnmascarada}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Monto</f:facet>
-                    L #{tx.monto}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Saldo final</f:facet>
-                    L #{tx.saldoFinal}
-                </h:column>
-            </h:dataTable>
+            <h:panelGroup rendered="#{not empty cajeroBean.historialClienteConsultado}" layout="block" styleClass="transaction-list">
+                <ui:repeat value="#{cajeroBean.historialClienteConsultado}" var="tx">
+                    <article class="transaction-card">
+                        <div class="transaction-main">
+                            <div>
+                                <span class="transaction-date">#{tx.fechaTexto}</span>
+                                <strong>#{tx.resumenTexto}</strong>
+                                <small class="transaction-mode">#{tx.modalidadTexto}</small>
+                            </div>
+                            <h:outputText value="#{tx.tipo}" styleClass="transaction-type #{tx.tipoCss}"/>
+                        </div>
+
+                        <div class="transaction-details">
+                            <span>Origen</span>
+                            <strong>#{tx.origenTexto}</strong>
+
+                            <span>Destino</span>
+                            <strong>#{tx.destinoTexto}</strong>
+
+                            <span>Monto</span>
+                            <h:outputText value="L #{tx.monto}" styleClass="#{tx.tipoCss}"/>
+
+                            <span>Saldo anterior</span>
+                            <strong>#{tx.saldoAnteriorTexto}</strong>
+
+                            <span>Saldo final</span>
+                            <strong>L #{tx.saldoFinal}</strong>
+                        </div>
+                    </article>
+                </ui:repeat>
+            </h:panelGroup>
 
             <h:panelGroup rendered="#{empty cajeroBean.historialClienteConsultado}" layout="block" styleClass="empty-history">
                 Esta cuenta no tiene transacciones registradas.

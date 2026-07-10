@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 
 public class Cliente implements Serializable {
     private String numeroCuenta;
+    private String nombreCliente;
     private BigDecimal saldo;
     private String pin;
 
@@ -12,7 +13,12 @@ public class Cliente implements Serializable {
     }
 
     public Cliente(String numeroCuenta, BigDecimal saldo, String pin) {
+        this(numeroCuenta, "Cliente sin nombre", saldo, pin);
+    }
+
+    public Cliente(String numeroCuenta, String nombreCliente, BigDecimal saldo, String pin) {
         this.numeroCuenta = numeroCuenta;
+        this.nombreCliente = nombreCliente;
         this.saldo = saldo;
         this.pin = pin;
     }
@@ -23,6 +29,14 @@ public class Cliente implements Serializable {
 
     public void setNumeroCuenta(String numeroCuenta) {
         this.numeroCuenta = numeroCuenta;
+    }
+
+    public String getNombreCliente() {
+        return nombreCliente;
+    }
+
+    public void setNombreCliente(String nombreCliente) {
+        this.nombreCliente = nombreCliente;
     }
 
     public BigDecimal getSaldo() {

@@ -14,7 +14,7 @@
                 <h:graphicImage library="images" name="banpais-inspiracion.png" styleClass="brand-image" alt="Logo Bi"/>
                 <div class="atm-card-preview">
                     <span>ATM</span>
-                    <strong>Cuenta segura</strong>
+                    <strong>#{cajeroBean.sesionActiva ? cajeroBean.clienteAutenticado.nombreCliente : 'Cuenta segura'}</strong>
                     <small>Banco de Honduras</small>
                 </div>
             </aside>
@@ -22,7 +22,9 @@
             <section class="screen-side">
                 <header class="topbar">
                     <span class="home-link">Cajero seguro</span>
-                    <span class="status-dot"></span>
+                    <h:form rendered="#{cajeroBean.sesionActiva}" styleClass="logout-form">
+                        <h:commandButton value="Cerrar sesion" action="#{cajeroBean.cerrarSesion}" styleClass="logout-button"/>
+                    </h:form>
                 </header>
 
                 <h:messages globalOnly="true" layout="table" infoClass="msg-info" errorClass="msg-error" warnClass="msg-warn"/>

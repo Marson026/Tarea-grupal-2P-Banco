@@ -3,6 +3,9 @@
       xmlns:ui="jakarta.faces.facelets"
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core">
+<f:metadata>
+    <f:viewAction action="#{cajeroBean.verificarSesion}"/>
+</f:metadata>
 <ui:composition template="/WEB-INF/templates/layout.xhtml">
     <ui:define name="title">Retiro</ui:define>
     <ui:define name="content">
@@ -12,26 +15,37 @@
         </div>
 
         <h:form styleClass="atm-form">
-            <label>Numero de cuenta</label>
-            <h:inputText value="#{cajeroBean.numeroCuenta}" maxlength="10"/>
-
-            <label>PIN</label>
-            <h:inputSecret value="#{cajeroBean.pin}" maxlength="4"/>
-
             <label>Monto en lempiras</label>
-            <h:inputText value="#{cajeroBean.monto}" maxlength="12"/>
+            <h:inputText value="#{cajeroBean.monto}" maxlength="12" styleClass="amount-input"/>
+
+            <div class="quick-amounts" aria-label="Montos rapidos">
+                <button type="button" class="quick-amount-button" onclick="seleccionarMontoRapido('100')">L 100</button>
+                <button type="button" class="quick-amount-button" onclick="seleccionarMontoRapido('500')">L 500</button>
+                <button type="button" class="quick-amount-button" onclick="seleccionarMontoRapido('1000')">L 1000</button>
+                <button type="button" class="quick-amount-button" onclick="seleccionarMontoRapido('2000')">L 2000</button>
+            </div>
 
             <div class="form-actions">
                 <h:commandButton value="Confirmar retiro" action="#{cajeroBean.retirar}" styleClass="primary-button danger"/>
-                <h:link outcome="/index" value="Regresar al menu" styleClass="secondary-button"/>
+                <h:commandButton value="Volver al menu" action="#{cajeroBean.volverMenu}" styleClass="secondary-button" immediate="true"/>
             </div>
         </h:form>
+
+        <script>
+            function seleccionarMontoRapido(monto) {
+                var campoMonto = document.querySelector('.amount-input');
+                if (campoMonto) {
+                    campoMonto.value = monto;
+                    campoMonto.focus();
+                }
+            }
+        </script>
 
         <h:panelGroup rendered="#{cajeroBean.mostrarResultado}" layout="block" styleClass="result-overlay">
             <div class="result-box">
                 <strong>#{cajeroBean.tituloResultado}</strong>
                 <span>#{cajeroBean.detalleResultado}</span>
-                <small>Sesion finalizada. Regresando al menu principal...</small>
+                <small>Regresando al menu principal...</small>
             </div>
             <script>
                 setTimeout(function () {

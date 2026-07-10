@@ -3,6 +3,9 @@
       xmlns:ui="jakarta.faces.facelets"
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core">
+<f:metadata>
+    <f:viewAction action="#{cajeroBean.verificarSesion}"/>
+</f:metadata>
 <ui:composition template="/WEB-INF/templates/layout.xhtml">
     <ui:define name="title">Deposito</ui:define>
     <ui:define name="content">
@@ -11,27 +14,98 @@
             <h1>Deposito</h1>
         </div>
 
-        <h:form styleClass="atm-form">
-            <label>Numero de cuenta</label>
-            <h:inputText value="#{cajeroBean.numeroCuenta}" maxlength="10"/>
+        <h:form styleClass="deposit-options" rendered="#{empty cajeroBean.modoDeposito}">
+            <h:commandButton value="Depositar a mi cuenta" action="#{cajeroBean.prepararDepositoPropio}" styleClass="primary-button"/>
+            <h:commandButton value="Depositar a terceros" action="#{cajeroBean.prepararDepositoTercero}" styleClass="primary-button"/>
+            <h:commandButton value="Volver al menu" action="#{cajeroBean.volverMenu}" styleClass="secondary-button" immediate="true"/>
+        </h:form>
 
-            <label>PIN</label>
-            <h:inputSecret value="#{cajeroBean.pin}" maxlength="4"/>
-
+        <h:form styleClass="atm-form" rendered="#{cajeroBean.depositoPropio}">
+            <h2 class="form-title">Deposito a mi cuenta</h2>
             <label>Monto en lempiras</label>
-            <h:inputText value="#{cajeroBean.monto}" maxlength="12"/>
+            <h:inputText value="#{cajeroBean.monto}" maxlength="12" styleClass="amount-input"/>
+
+            <div class="quick-amounts" aria-label="Montos rapidos">
+                <button type="button" class="quick-amount-button" onclick="seleccionarMontoRapido('100')">L 100</button>
+                <button type="button" class="quick-amount-button" onclick="seleccionarMontoRapido('500')">L 500</button>
+                <button type="button" class="quick-amount-button" onclick="seleccionarMontoRapido('1000')">L 1000</button>
+                <button type="button" class="quick-amount-button" onclick="seleccionarMontoRapido('2000')">L 2000</button>
+            </div>
 
             <div class="form-actions">
                 <h:commandButton value="Confirmar deposito" action="#{cajeroBean.depositar}" styleClass="primary-button"/>
-                <h:link outcome="/index" value="Regresar al menu" styleClass="secondary-button"/>
+                <h:commandButton value="Volver al menu" action="#{cajeroBean.volverMenu}" styleClass="secondary-button" immediate="true"/>
             </div>
         </h:form>
+
+        <h:form styleClass="atm-form" rendered="#{cajeroBean.depositoTercero and not cajeroBean.mostrarConfirmacionDepositoTercero}">
+            <h2 class="form-title">Deposito a terceros</h2>
+
+            <h:panelGroup rendered="#{not empty cajeroBean.favoritosClienteAutenticado}" layout="block" styleClass="favorites-section">
+                <strong>Favoritos</strong>
+                <div class="favorites-list">
+                    <ui:repeat value="#{cajeroBean.favoritosClienteAutenticado}" var="fav">
+                        <h:commandButton value="#{fav.nombreFavorito} #{fav.cuentaEnmascarada}"
+                                         action="#{cajeroBean.seleccionarFavorito(fav)}"
+                                         styleClass="favorite-button"/>
+                    </ui:repeat>
+                </div>
+            </h:panelGroup>
+
+            <label>Cuenta destino</label>
+            <h:inputText value="#{cajeroBean.numeroCuentaDestino}" maxlength="10"/>
+
+            <label>Monto en lempiras</label>
+            <h:inputText value="#{cajeroBean.monto}" maxlength="12" styleClass="amount-input"/>
+
+            <div class="quick-amounts" aria-label="Montos rapidos">
+                <button type="button" class="quick-amount-button" onclick="seleccionarMontoRapido('100')">L 100</button>
+                <button type="button" class="quick-amount-button" onclick="seleccionarMontoRapido('500')">L 500</button>
+                <button type="button" class="quick-amount-button" onclick="seleccionarMontoRapido('1000')">L 1000</button>
+                <button type="button" class="quick-amount-button" onclick="seleccionarMontoRapido('2000')">L 2000</button>
+            </div>
+
+            <div class="form-actions">
+                <h:commandButton value="Validar cuenta" action="#{cajeroBean.prepararConfirmacionDepositoTercero}" styleClass="primary-button"/>
+                <h:commandButton value="Volver al menu" action="#{cajeroBean.volverMenu}" styleClass="secondary-button" immediate="true"/>
+            </div>
+
+        </h:form>
+
+        <h:form styleClass="atm-form" rendered="#{cajeroBean.depositoTercero and cajeroBean.mostrarConfirmacionDepositoTercero}">
+            <h2 class="form-title">Confirmar deposito</h2>
+
+            <div class="confirm-box">
+                <strong>Revise los datos antes de continuar</strong>
+                <span>Origen: #{cajeroBean.clienteAutenticado.nombreCliente}</span>
+                <span>Destino: #{cajeroBean.clienteDestinoConfirmado.nombreCliente}</span>
+                <span>Cuenta destino: #{cajeroBean.clienteDestinoConfirmado.numeroCuenta}</span>
+                <span>Monto: L #{cajeroBean.montoConfirmado}</span>
+            </div>
+
+            <div class="form-actions">
+                <h:commandButton value="Guardar favorito" action="#{cajeroBean.guardarFavoritoDestino}" styleClass="secondary-button"/>
+                <h:commandButton value="Si, confirmar deposito" action="#{cajeroBean.confirmarDepositoTercero}" styleClass="primary-button"/>
+            </div>
+
+            <h:commandButton value="Cancelar" action="#{cajeroBean.cancelarConfirmacionDepositoTercero}" styleClass="secondary-button" immediate="true"/>
+        </h:form>
+
+        <script>
+            function seleccionarMontoRapido(monto) {
+                var campoMonto = document.querySelector('.amount-input');
+                if (campoMonto) {
+                    campoMonto.value = monto;
+                    campoMonto.focus();
+                }
+            }
+        </script>
 
         <h:panelGroup rendered="#{cajeroBean.mostrarResultado}" layout="block" styleClass="result-overlay">
             <div class="result-box">
                 <strong>#{cajeroBean.tituloResultado}</strong>
                 <span>#{cajeroBean.detalleResultado}</span>
-                <small>Sesion finalizada. Regresando al menu principal...</small>
+                <small>Regresando al menu principal...</small>
             </div>
             <script>
                 setTimeout(function () {

@@ -5,25 +5,65 @@
 <ui:composition template="/WEB-INF/templates/layout.xhtml">
     <ui:define name="title">Menu del Cajero</ui:define>
     <ui:define name="content">
-        <div class="screen-heading">
-            <p>Bienvenido</p>
-            <h1>Cajero automatico Bi</h1>
-        </div>
+        <h:panelGroup rendered="#{not cajeroBean.sesionActiva}" layout="block">
+            <div class="screen-heading">
+                <p>Acceso seguro</p>
+                <h1>Iniciar sesion</h1>
+            </div>
 
-        <h:form styleClass="menu-grid">
-            <h:commandLink action="#{cajeroBean.irDeposito}" styleClass="menu-action">
-                <span>Depositar</span>
-                <small>Agregar fondos a una cuenta</small>
-            </h:commandLink>
-            <h:commandLink action="#{cajeroBean.irRetiro}" styleClass="menu-action">
-                <span>Retirar</span>
-                <small>Validar PIN y saldo disponible</small>
-            </h:commandLink>
-            <h:commandLink action="#{cajeroBean.irSaldo}" styleClass="menu-action">
-                <span>Consultar saldo</span>
-                <small>Ver el saldo actual de una cuenta</small>
-            </h:commandLink>
-        </h:form>
+            <h:form styleClass="atm-form compact">
+                <label>Numero de cuenta</label>
+                <h:inputText value="#{cajeroBean.numeroCuenta}" maxlength="10"/>
+
+                <label>PIN</label>
+                <h:inputSecret value="#{cajeroBean.pin}" maxlength="4"/>
+
+                <div class="form-actions single-action">
+                    <h:commandButton value="Ingresar" action="#{cajeroBean.iniciarSesion}" styleClass="primary-button"/>
+                </div>
+            </h:form>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{cajeroBean.sesionActiva and cajeroBean.mostrarBienvenida}" layout="block"
+                      styleClass="welcome-screen" id="welcomeScreen">
+            <div class="welcome-brand">
+                <h1>Bienvenido, #{cajeroBean.clienteAutenticado.nombreCliente}</h1>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{cajeroBean.sesionActiva}" layout="block" id="menuPrincipal"
+                      style="#{cajeroBean.mostrarBienvenida ? 'display: none;' : 'display: block;'}">
+            <div class="screen-heading">
+                <p>Menu principal</p>
+                <h1>Cajero automatico Bi</h1>
+            </div>
+
+            <h:form styleClass="menu-grid">
+                <h:commandLink action="#{cajeroBean.irDeposito}" styleClass="menu-action">
+                    <span>Depositar</span>
+                    <small>Agregar fondos a una cuenta</small>
+                </h:commandLink>
+                <h:commandLink action="#{cajeroBean.irRetiro}" styleClass="menu-action">
+                    <span>Retirar</span>
+                    <small>Validar saldo disponible</small>
+                </h:commandLink>
+                <h:commandLink action="#{cajeroBean.irSaldo}" styleClass="menu-action">
+                    <span>Consultar saldo</span>
+                    <small>Ver el saldo actual de una cuenta</small>
+                </h:commandLink>
+            </h:form>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{cajeroBean.sesionActiva and cajeroBean.mostrarBienvenida}">
+            <script>
+            function mostrarMenuCajero() {
+                document.getElementById('welcomeScreen').style.display = 'none';
+                document.getElementById('menuPrincipal').style.display = 'block';
+            }
+
+            setTimeout(mostrarMenuCajero, 3000);
+            </script>
+        </h:panelGroup>
     </ui:define>
 </ui:composition>
 </html>
