@@ -2,7 +2,7 @@
 
 Aplicacion web desarrollada con Jakarta Faces que simula un cajero automatico. Permite iniciar sesion con numero de cuenta y PIN, consultar saldo, realizar depositos, retirar efectivo y revisar el historial de transacciones.
 
-## Proyecto Grupal miembros
+## Proyecto Grupal miembros.
 - Luis Alberto Colindres Ventura 201930060108
 - Emerson Ricardo Jimenez 202310080212
 - Marlon Jared Saenz Blanco 202230010131
